@@ -1,11 +1,6 @@
-# -----------------------------
-# Resource Group
-# -----------------------------
-resource "azurerm_resource_group" "rg" {
-  name     = var.rg_name
-  location = var.location
-}
-
+# ----------------------------------------------------
+# 1. Terraform Configuration & Provider Setup
+# ----------------------------------------------------
 terraform {
   required_providers {
     azurerm = {
@@ -15,13 +10,16 @@ terraform {
   }
 }
 
+# The error you are seeing is related to this provider block's default behavior.
+# By default, without explicit credentials, the AzureRM provider attempts to use
+# the credentials from an active Azure CLI session.
 provider "azurerm" {
   features {}
 }
 
-# -----------------------------
-# Variables
-# -----------------------------
+# ----------------------------------------------------
+# 2. Variables
+# ----------------------------------------------------
 variable "rg_name" {
   description = "The name of the Azure Resource Group"
   type        = string
@@ -100,9 +98,11 @@ variable "windows_app_settings" {
   default     = {}
 }
 
-# -----------------------------
+# ----------------------------------------------------
+# 3. Resources
+# ----------------------------------------------------
+
 # Random suffix (for uniqueness)
-# -----------------------------
 resource "random_string" "suffix" {
   length  = 5
   upper   = false
@@ -111,9 +111,13 @@ resource "random_string" "suffix" {
   special = false
 }
 
-# -----------------------------
+# Resource Group
+resource "azurerm_resource_group" "rg" {
+  name     = var.rg_name
+  location = var.location
+}
+
 # App Service Plans
-# -----------------------------
 resource "azurerm_service_plan" "plan_linux" {
   name                = "${var.project}-linux-plan"
   resource_group_name = azurerm_resource_group.rg.name
@@ -130,9 +134,7 @@ resource "azurerm_service_plan" "plan_windows" {
   sku_name            = var.plan_sku_windows
 }
 
-# -----------------------------
 # Application Insights
-# -----------------------------
 resource "azurerm_application_insights" "ai_linux" {
   name                = "${var.project}-ai-linux-${random_string.suffix.result}"
   location            = azurerm_resource_group.rg.location
@@ -147,9 +149,7 @@ resource "azurerm_application_insights" "ai_windows" {
   application_type    = "web"
 }
 
-# -----------------------------
 # Linux Web App
-# -----------------------------
 resource "azurerm_linux_web_app" "app_linux" {
   name                = "${var.linux_app_name}-${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -189,9 +189,7 @@ resource "azurerm_linux_web_app" "app_linux" {
   }
 }
 
-# -----------------------------
 # Windows Web App
-# -----------------------------
 resource "azurerm_windows_web_app" "app_windows" {
   name                = "${var.windows_app_name}-${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
@@ -225,9 +223,9 @@ resource "azurerm_windows_web_app" "app_windows" {
   }
 }
 
-# -----------------------------
-# Outputs
-# -----------------------------
+# ----------------------------------------------------
+# 4. Outputs
+# ----------------------------------------------------
 output "linux_web_app_name" {
   value = azurerm_linux_web_app.app_linux.name
 }
