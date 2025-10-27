@@ -19,7 +19,7 @@ variable "location" {
 # -----------------------------
 # Core
 # -----------------------------
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "rg1" {
  name     = var.rg_name
  location = var.location
 }
