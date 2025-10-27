@@ -156,4 +156,5 @@ output "windows_web_app_name" {
  value = azurerm_windows_web_app.app_windows.name
 }
 output "windows_web_app_url" {
- value = "https://${azurerm_windows_web_app.app_windows.default_hostname}" }
+ value = "https://${azurerm_windows_web_app.app_windows.default_hostname}" 
+}
