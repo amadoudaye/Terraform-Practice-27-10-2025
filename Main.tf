@@ -1,3 +1,21 @@
+resource "azurerm_resource_group" "rg" {
+  name     = var.rg_name
+  location = var.location
+}
+
+# variables.tf (recommended)
+variable "rg_name" {
+  description = "The name of the Azure Resource Group"
+  type        = string
+  default     = "my-resource-group"
+}
+
+variable "location" {
+  description = "The Azure region for the Resource Group"
+  type        = string
+  default     = "East US"
+}
+
 # -----------------------------
 # Core
 # -----------------------------
